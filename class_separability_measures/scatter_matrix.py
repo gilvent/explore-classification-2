@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def within_class_scatter_matrix(X: np.ndarray, Y: np.ndarray):

@@ -8,6 +8,7 @@ from class_separability_measures.fisher_linear_discriminant import (
     projection_vector,
     fdr,
     fdr_1d,
+    display_1d_projection,
 )
 from evaluation.roc_curve import predictions_by_threshold, print_roc_curve
 from evaluation.confusion_matrix import confusion_matrix
@@ -40,11 +41,11 @@ def main():
     w = projection_vector(within_cl_scatter=Sw, X_cl_1=X_cl_1, X_cl_0=X_cl_0)
 
     # Compute FLD before projection
-    sep_before_projecton = fdr(
+    sep_before_projection = fdr(
         projection_vector=w, within_cl_scatter=Sw, between_cl_scatter=Sb
     )
 
-    print(f"Separability before projection: {sep_before_projecton:.3f}")
+    fdr_before_proj_text = f"FDR (before projection): {sep_before_projection:.3f}"
 
     # Project the data onto the discriminant
     X_projected = train_X @ w
@@ -56,7 +57,13 @@ def main():
         X_cl_1_projected=X_cl_1_projected, X_cl_0_projected=X_cl_0_projected
     )
 
-    print(f"Separability after projection: {sep_after_projection:.3f}")
+    fdr_after_proj_text = f"FDR (after projection): {sep_after_projection:.3f}"
+
+    display_1d_projection(
+        X_cl_0_projected=X_cl_0_projected,
+        X_cl_1_projected=X_cl_1_projected,
+        title=f"{fdr_before_proj_text}, {fdr_after_proj_text}",
+    )
 
     # Get range of thresholds for classification
     lowest_X_projected = np.min(X_projected)
