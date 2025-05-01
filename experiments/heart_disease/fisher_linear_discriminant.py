@@ -82,7 +82,7 @@ def main():
 
     for t in thresholds:
         thresholded_pred = predictions_by_threshold(
-            probabilities=test_X_projected, threshold=t
+            discriminants=test_X_projected, threshold=t
         )
         conf_matrix = confusion_matrix(
             classes=classes, actual_Y=test_Y, pred_Y=thresholded_pred

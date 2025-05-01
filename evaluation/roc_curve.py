@@ -2,10 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def predictions_by_threshold(probabilities: np.ndarray, threshold: float = 0.1):
+def predictions_by_threshold(discriminants: np.ndarray, threshold: float = 0.1):
     result = []
-    for p in probabilities:
-        result.append(1 if p >= threshold else 0)
+    for d in discriminants:
+        result.append(1 if d >= threshold else 0)
 
     return result
 
