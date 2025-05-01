@@ -29,6 +29,8 @@ def main():
     # Since all target > 0 is classified as having heart disease, we convert the value into 1
     Y[Y > 0] = 1
 
+    classes = np.unique(Y)
+
     train_X, train_Y, test_X, test_Y = train_test_split(X=X, Y=Y, test_split_ratio=0.3)
 
     # Compute scatter matrices
@@ -65,6 +67,13 @@ def main():
         title=f"{fdr_before_proj_text}, {fdr_after_proj_text}",
     )
 
+
+    # ROC Curve
+    tpr = []
+    fpr = []
+
+    test_X_projected = test_X @ w
+
     # Get range of thresholds for classification
     lowest_X_projected = np.min(X_projected)
     highest_X_projected = np.max(X_projected)
@@ -72,13 +81,6 @@ def main():
     # Create 10 thresholds for ROC curve
     step = (highest_X_projected - lowest_X_projected) / 10
     thresholds = np.arange(lowest_X_projected, highest_X_projected + step + 0.1, step)
-
-    # ROC Curve
-    tpr = []
-    fpr = []
-
-    test_X_projected = test_X @ w
-    classes = np.unique(Y)
 
     for t in thresholds:
         thresholded_pred = predictions_by_threshold(
