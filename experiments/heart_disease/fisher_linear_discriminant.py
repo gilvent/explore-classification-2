@@ -31,7 +31,7 @@ def main():
 
     classes = np.unique(Y)
 
-    train_X, train_Y, test_X, test_Y = train_test_split(X=X, Y=Y, test_split_ratio=0.3)
+    train_X, train_Y, test_X, test_Y = train_test_split(X=X, Y=Y, test_split_ratio=0.3, seed=13)
 
     # Compute scatter matrices
     Sw = within_class_scatter_matrix(X=train_X, Y=train_Y)

@@ -17,7 +17,7 @@ def main():
     classes = np.unique(Y)
 
     train_X, train_Y, test_X, test_Y = train_test_split(
-        X=X, Y=Y, test_split_ratio=0.7, shuffle=False
+        X=X, Y=Y, test_split_ratio=0.7, shuffle=False, seed=13
     )
 
     model = LinearDiscriminantAnalysis(unique_classes=classes)

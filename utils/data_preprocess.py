@@ -25,8 +25,11 @@ def balanced_train_test_split(
     return (np.array(train_X), np.array(train_Y), np.array(test_X), np.array(test_Y))
 
 
-def train_test_split(X: np.ndarray, Y: np.ndarray, test_split_ratio=0.3, shuffle = True):
+def train_test_split(X: np.ndarray, Y: np.ndarray, seed = None, test_split_ratio=0.3, shuffle = True,):
     index = np.arange(X.shape[0])
+
+    if (seed != None):
+        np.random.seed(seed)
 
     if (shuffle == True):
         np.random.shuffle(index)
