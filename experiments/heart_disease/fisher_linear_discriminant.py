@@ -1,18 +1,14 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from class_separability_measures.scatter_matrix import (
+from dimensionality_reduction.class_separability_measures import (
     within_class_scatter_matrix,
     between_class_scatter_matrix,
-)
-from class_separability_measures.fisher_linear_discriminant import (
-    projection_vector,
+    fld,
     fdr,
-    fdr_1d,
-    display_1d_projection,
 )
 from evaluation.roc_curve import predictions_by_threshold, print_roc_curve
 from evaluation.confusion_matrix import confusion_matrix
 from utils.data_preprocess import train_test_split
+from visualization.fld import display_1d_projection
 
 
 def main():
@@ -31,7 +27,9 @@ def main():
 
     classes = np.unique(Y)
 
-    train_X, train_Y, test_X, test_Y = train_test_split(X=X, Y=Y, test_split_ratio=0.3, seed=13)
+    train_X, train_Y, test_X, test_Y = train_test_split(
+        X=X, Y=Y, test_split_ratio=0.3, seed=13
+    )
 
     # Compute scatter matrices
     Sw = within_class_scatter_matrix(X=train_X, Y=train_Y)
@@ -40,14 +38,7 @@ def main():
     X_cl_0 = train_X[train_Y == 0]
 
     # Get the projection vector
-    w = projection_vector(within_cl_scatter=Sw, X_cl_1=X_cl_1, X_cl_0=X_cl_0)
-
-    # Compute FLD before projection
-    sep_before_projection = fdr(
-        projection_vector=w, within_cl_scatter=Sw, between_cl_scatter=Sb
-    )
-
-    fdr_before_proj_text = f"FDR (before projection): {sep_before_projection:.3f}"
+    w = fld(within_cl_scatter=Sw, X_cl_1=X_cl_1, X_cl_0=X_cl_0)
 
     # Project the data onto the discriminant
     X_projected = train_X @ w
@@ -55,7 +46,7 @@ def main():
     X_cl_0_projected = X_projected[train_Y == 0]
 
     # Calculate separability on the projection
-    sep_after_projection = fdr_1d(
+    sep_after_projection = fdr(
         X_cl_1_projected=X_cl_1_projected, X_cl_0_projected=X_cl_0_projected
     )
 
@@ -64,9 +55,8 @@ def main():
     display_1d_projection(
         X_cl_0_projected=X_cl_0_projected,
         X_cl_1_projected=X_cl_1_projected,
-        title=f"{fdr_before_proj_text}, {fdr_after_proj_text}",
+        title=fdr_after_proj_text,
     )
-
 
     # ROC Curve
     tpr = []
