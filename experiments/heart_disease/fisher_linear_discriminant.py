@@ -2,7 +2,7 @@ import numpy as np
 from dimensionality_reduction.class_separability_measures import (
     within_class_scatter_matrix,
     between_class_scatter_matrix,
-    fld,
+    fld_vector,
     fdr,
 )
 from evaluation.roc_curve import predictions_by_threshold, print_roc_curve
@@ -38,7 +38,7 @@ def main():
     X_cl_0 = train_X[train_Y == 0]
 
     # Get the projection vector
-    w = fld(within_cl_scatter=Sw, X_cl_1=X_cl_1, X_cl_0=X_cl_0)
+    w = fld_vector(within_cl_scatter=Sw, X_cl_1=X_cl_1, X_cl_0=X_cl_0)
 
     # Project the data onto the discriminant
     X_projected = train_X @ w

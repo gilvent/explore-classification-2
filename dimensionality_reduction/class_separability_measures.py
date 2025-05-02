@@ -37,11 +37,12 @@ def between_class_scatter_matrix(X: np.ndarray, Y: np.ndarray):
     return Sb
 
 
-def fld(within_cl_scatter, X_cl_1: np.ndarray, X_cl_0: np.ndarray):
+def fld_vector(within_cl_scatter, X_cl_1: np.ndarray, X_cl_0: np.ndarray):
     """
     Fisher Linear Discriminant.
 
-    Gives a 1D projection direction for two-classes case. Based on the formula:
+    FLD vector (along the column) gives a 1D projection direction that maximizes class separability for 2-class case.
+    Based on the formula:
 
     w = inverse(Sw) @ (mean_1 - mean_0)
     """
