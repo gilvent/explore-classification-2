@@ -16,8 +16,11 @@ class FisherLinearDiscriminant:
         self.W = np.array([])
         self.class_means = {}
         self.train_X_projected = np.array([])
+        self.train_Y = None
 
     def fit(self, train_X: np.ndarray, train_Y: np.ndarray):
+        self.train_Y = train_Y
+        
         # Get the projection vector
         self.W = fld_vector(X=train_X, Y=train_Y)
 
@@ -34,15 +37,15 @@ class FisherLinearDiscriminant:
         # Project into 1d
         return X @ self.W
 
-    def output(self, test_X, test_Y):
+    def output(self, test_X):
         pred_Y = []
 
         test_X_projected = test_X @ self.W
 
         # Use the middle point between the means
-        test_X_1_projected_mean = np.mean(test_X_projected[test_Y == 1])
-        test_X_0_projected_mean = np.mean(test_X_projected[test_Y == 0])
-        threshold = (test_X_1_projected_mean + test_X_0_projected_mean) / 2
+        X_1_projected_mean = np.mean(self.train_X_projected[self.train_Y == 1])
+        X_0_projected_mean = np.mean(self.train_X_projected[self.train_Y == 0])
+        threshold = (X_1_projected_mean + X_0_projected_mean) / 2
 
         for x in test_X_projected:
             # If larger than threshold, that it is the positive class

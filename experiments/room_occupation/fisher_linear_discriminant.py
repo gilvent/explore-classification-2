@@ -61,7 +61,7 @@ def main():
     )
 
     # Make predictions on test data
-    output = fld.output(test_X=test_X, test_Y=test_Y)
+    output = fld.output(test_X=test_X)
     pred_Y = output["predictions"]
 
     # Confusion matrix
