@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class PrincipalComponentAnalysis:
     def __init__(self, n_components):
         self.n_components = n_components
@@ -13,7 +14,6 @@ class PrincipalComponentAnalysis:
         self.train_X = train_X
         self.train_X_mean = np.mean(train_X, axis=0)
         train_X_centered = train_X - self.train_X_mean
-        print(f"Data centered. Mean should be close to zero: {np.mean(train_X_centered, axis=0)}")
 
         # Calculate covariance matrix
         n_samples = train_X.shape[0]
@@ -35,18 +35,15 @@ class PrincipalComponentAnalysis:
         self.explained_variance_ratio = self.eigenvalues / total_variance
         print("Explained variance ratio:", self.explained_variance_ratio)
         print(
-            f"Selected components explain {np.sum(self.explained_variance_ratio[:self.n_components]):.2f} of variance"
+            f"Selected top {self.n_components} components explain {np.sum(self.explained_variance_ratio[:self.n_components]):.2f} of variance"
         )
 
-        self.PC = self.eigenvectors[:, :self.n_components]
-            
-        
+        self.PC = self.eigenvectors[:, : self.n_components]
 
     # Project train or test samples into l-dimensional subspace
     def transform(self, X):
         X_centered = X - self.train_X_mean
         return np.dot(X_centered, self.PC)
-    
 
     def reconstruction_error(self):
         # Reconstruct data
@@ -58,4 +55,3 @@ class PrincipalComponentAnalysis:
         # Calculate reconstruction error
         reconstruction_error = np.mean(np.square(self.train_X - train_X_reconstructed))
         print(f"Reconstruction error: {reconstruction_error:.4f}")
-

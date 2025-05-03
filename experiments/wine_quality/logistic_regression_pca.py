@@ -27,11 +27,13 @@ def main():
     pca = PrincipalComponentAnalysis(n_components=2)
     pca.fit(train_X=train_X)
 
+    # This visualization is for top 2 principal components
+    # Modify pc_index to check the other principal components
     display_two_pca_projections(
         train_X=train_X,
         train_Y=train_Y,
         pc_index_1=0,
-        pc_index_2=3,
+        pc_index_2=1,
         pca_eigenvectors=pca.eigenvectors,
         explained_variance_ratio=pca.explained_variance_ratio,
     )
@@ -51,7 +53,7 @@ def main():
         train_X=train_X_pca, train_Y=train_Y, iterations=1500, print_losses=False
     )
 
-    # Project the test data
+    # Project the test data to make predictions
     test_X_pca = pca.transform(X=test_X)
 
     pred_probabilities = model.predict(test_X=test_X_pca)

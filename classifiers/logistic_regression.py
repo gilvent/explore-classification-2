@@ -36,6 +36,7 @@ class LogisticRegression:
     def train(
         self, train_X: np.ndarray, train_Y: np.ndarray, iterations=5, print_losses=False
     ):
+        print("Logistic Regression training...")
         for index in range(0, iterations):
             scores = [self.__score(features_vector=f) for f in train_X]
             self.predicted_probabilities = np.asarray(

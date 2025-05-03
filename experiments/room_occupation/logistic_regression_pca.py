@@ -2,55 +2,70 @@ import numpy as np
 from classifiers.logistic_regression import LogisticRegression
 from evaluation.metrics import accuracy_score, recall_score, precision_score, f1_score
 from evaluation.confusion_matrix import confusion_matrix, display_confusion_matrix
-from utils.data_preprocess import train_test_split
+from utils.data_preprocess import (
+    to_seconds_since_midnight,
+)
 from evaluation.roc_curve import print_roc_curve, predictions_by_threshold
 from dimensionality_reduction.pca import PrincipalComponentAnalysis
 from visualization.pca import display_two_pca_projections
 
 
+def preprocess(dataset):
+    # Convert the second column (date time string) into numerical value
+    X_2nd_col = dataset[:, 1]
+    updated_X_2nd_col = []
+
+    for datestr in X_2nd_col:
+        time_in_seconds = to_seconds_since_midnight(datestr.replace('"', ""))
+        updated_X_2nd_col.append(time_in_seconds)
+
+    updated_X_2nd_col = np.array(updated_X_2nd_col)
+
+    # Combine the updated second column with the rest, we don't use the first column
+    X_rest = dataset[:, 2:-1].astype(float)
+    X = np.hstack((updated_X_2nd_col.reshape(-1, 1), X_rest))
+    Y = dataset[:, -1].astype(float)
+
+    return (X, Y)
+
+
 def main():
-    dataset = np.loadtxt(
-        fname="data/heart_disease_cleveland_processed.txt", delimiter=",", dtype=str
+    training_set = np.loadtxt(
+        fname="data/room_occupancy_datatraining.txt", delimiter=",", dtype=str
+    )
+    test_set = np.loadtxt(
+        fname="data/room_occupancy_datatest.txt", delimiter=",", dtype=str
     )
 
-    # Remove rows with missing values
-    filtered_dataset = dataset[~np.char.equal(dataset, "?").any(axis=1)]
-    filtered_dataset = filtered_dataset.astype(float)
-    X = filtered_dataset[:, 0:-1]
-    Y = filtered_dataset[:, -1]
+    train_X, train_Y = preprocess(training_set)
+    test_X, test_Y = preprocess(test_set)
 
-    # Since all target > 0 is classified as having heart disease, we convert the value into 1
-    Y[Y > 0] = 1
-
-    # Initialize the model
-    classes = np.unique(Y)
-    train_X, train_Y, test_X, test_Y = train_test_split(
-        X=X, Y=Y, test_split_ratio=0.3, seed=13
-    )
-
+    # PCA
     pca = PrincipalComponentAnalysis(n_components=3)
     pca.fit(train_X=train_X)
 
-
+    # This visualization is for top 2 principal components
+    # Modify pc_index to check the other principal components
     display_two_pca_projections(
         train_X=train_X,
         train_Y=train_Y,
         pc_index_1=0,
         pc_index_2=1,
         pca_eigenvectors=pca.eigenvectors,
-        explained_variance_ratio=pca.explained_variance_ratio
+        explained_variance_ratio=pca.explained_variance_ratio,
     )
 
+    # Project the data
     train_X_pca = pca.transform(X=train_X)
+
+    # Initialize the model
+    classes = np.unique(train_Y)
 
     weights = np.asarray([0 for _ in range(0, train_X_pca.shape[1])])
     model = LogisticRegression(weights=weights)
+    model.train(train_X=train_X_pca, train_Y=train_Y, iterations=1000, print_losses=True)
 
-    # Train on reduced features
-    model.train(train_X=train_X_pca, train_Y=train_Y, iterations=1000)
-
-
-    # Project the test data
+    # Project test data to make predictions
     test_X_pca = pca.transform(X=test_X)
 
     # Output the result
@@ -69,7 +84,7 @@ def main():
     display_confusion_matrix(
         conf_matrix=conf_matrix,
         classes=classes,
-        title="Heart Disease Dataset/Logistic Regression w/ PCA",
+        title="Room occupancy/Logistic Regression w/ PCA",
         info=info_text,
     )
 

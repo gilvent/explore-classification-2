@@ -22,10 +22,10 @@ def display_two_pca_projections(
         )
 
     plt.xlabel(
-        f"Principal Component 1 ({explained_variance_ratio[pc_index_1]:.2%} variance)"
+        f"Principal Component {pc_index_1 + 1} ({explained_variance_ratio[pc_index_1]:.2%} variance)"
     )
     plt.ylabel(
-        f"Principal Component 2 ({explained_variance_ratio[pc_index_2]:.2%} variance)"
+        f"Principal Component {pc_index_2 + 1} ({explained_variance_ratio[pc_index_2]:.2%} variance)"
     )
     plt.title("PCA of Multiclass Dataset")
     plt.legend()
