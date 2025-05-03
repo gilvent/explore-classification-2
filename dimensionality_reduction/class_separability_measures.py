@@ -11,7 +11,10 @@ def within_class_scatter_matrix(X: np.ndarray, Y: np.ndarray):
 
         mean_vec = np.mean(X_cl, axis=0)
 
-        Sw += (X_cl - mean_vec).T @ (X_cl - mean_vec)
+        X_centered = X_cl - mean_vec
+        class_scatter = X_centered.T @ X_centered
+
+        Sw += class_scatter
 
     return Sw
 
@@ -63,6 +66,7 @@ def fld_vector(X: np.ndarray, Y: np.ndarray):
 
     return w
 
+
 def trace_ratio(X, Y):
     """
     J(w) = tr{Sm} / tr {Sw} for n-dimension (before projection)
@@ -77,3 +81,19 @@ def trace_ratio(X, Y):
 
     return np.trace(Sm) / np.trace(Sw)
 
+
+def generalized_eigenvalue(X, Y):
+    """
+    J(w) = tr{Sw^-1 . Sm}
+
+    Measures class separability before and after LDA
+    """
+    # Handle case where X after LDA projection is complex object, causing errors when computing scatter matrices
+    if np.iscomplexobj(X):
+        X = np.real(X)
+
+    Sw = within_class_scatter_matrix(X=X, Y=Y)
+    Sb = between_class_scatter_matrix(X=X, Y=Y)
+    Sm = Sw + Sb
+
+    return np.trace(np.linalg.inv(Sw) @ Sm)

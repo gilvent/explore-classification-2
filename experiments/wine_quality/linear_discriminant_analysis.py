@@ -3,6 +3,8 @@ from evaluation.confusion_matrix import confusion_matrix, display_confusion_matr
 from evaluation.metrics import accuracy_score, macro_f1_score
 from utils.data_preprocess import train_test_split
 from classifiers.linear_discriminant_analysis import LinearDiscriminantAnalysis
+from dimensionality_reduction.class_separability_measures import generalized_eigenvalue
+
 
 def main():
     dataset = np.genfromtxt(
@@ -20,15 +22,28 @@ def main():
         X=X, Y=Y, test_split_ratio=0.7, shuffle=False, seed=13
     )
 
+    # Class separability before projection
+    initial_class_separability = generalized_eigenvalue(X=train_X, Y=train_Y)
+
+    # Apply LDA
     model = LinearDiscriminantAnalysis(unique_classes=classes)
     model.train(train_X=train_X, train_Y=train_Y)
 
+    # Class separability after projection
+    projection_class_separability = generalized_eigenvalue(
+        X=model.train_X_projected, Y=train_Y
+    )
+    print(
+        f"Class separability, initial: {initial_class_separability:.3f}, LDA: {projection_class_separability:.3f}"
+    )
+
+    # Predictions on test data
     output = model.output(test_X=test_X)
     discriminants = output["discriminants"]
     print("LDA directions (in columns):\n", discriminants)
 
     pred_Y = output["predictions"]
-    
+
     accuracy = accuracy_score(actual_Y=test_Y, pred_Y=pred_Y)
     conf_matrix = confusion_matrix(classes=classes, actual_Y=test_Y, pred_Y=pred_Y)
     macro_f1 = macro_f1_score(conf_matrix=np.array(conf_matrix))
