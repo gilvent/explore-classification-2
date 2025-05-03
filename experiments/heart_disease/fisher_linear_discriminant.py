@@ -1,9 +1,7 @@
 import numpy as np
 from dimensionality_reduction.class_separability_measures import (
-    within_class_scatter_matrix,
-    between_class_scatter_matrix,
     fld_vector,
-    fdr,
+    trace_ratio,
 )
 from evaluation.roc_curve import predictions_by_threshold, print_roc_curve
 from evaluation.confusion_matrix import confusion_matrix
@@ -31,31 +29,22 @@ def main():
         X=X, Y=Y, test_split_ratio=0.3, seed=13
     )
 
-    # Compute scatter matrices
-    Sw = within_class_scatter_matrix(X=train_X, Y=train_Y)
-    Sb = between_class_scatter_matrix(X=train_X, Y=train_Y)
-    X_cl_1 = train_X[train_Y == 1]
-    X_cl_0 = train_X[train_Y == 0]
+    # Separability before projection
+    initial_class_separability = trace_ratio(X=train_X, Y=train_Y)
 
     # Get the projection vector
-    w = fld_vector(within_cl_scatter=Sw, X_cl_1=X_cl_1, X_cl_0=X_cl_0)
+    w = fld_vector(X=train_X, Y=train_Y)
 
     # Project the data onto the discriminant
     X_projected = train_X @ w
-    X_cl_1_projected = X_projected[train_Y == 1]
-    X_cl_0_projected = X_projected[train_Y == 0]
 
-    # Calculate separability on the projection
-    sep_after_projection = fdr(
-        X_cl_1_projected=X_cl_1_projected, X_cl_0_projected=X_cl_0_projected
-    )
-
-    fdr_after_proj_text = f"FDR (after projection): {sep_after_projection:.3f}"
+    # Separability after projection
+    projection_class_separability = trace_ratio(X=X_projected, Y=train_Y)
 
     display_1d_projection(
-        X_cl_0_projected=X_cl_0_projected,
-        X_cl_1_projected=X_cl_1_projected,
-        title=fdr_after_proj_text,
+        X_projected=X_projected,
+        Y=train_Y,
+        title=f"Class separability, initial: {initial_class_separability:.3f}, projection: {projection_class_separability:.3f}",
     )
 
     # ROC Curve

@@ -3,8 +3,12 @@ import matplotlib.pyplot as plt
 
 
 def display_1d_projection(
-    X_cl_0_projected: np.ndarray, X_cl_1_projected: np.ndarray, title="Projected value"
+    X_projected: np.ndarray, Y: np.ndarray, title="Projected value"
 ):
+
+    X_cl_1_projected = X_projected[Y == 1]
+    X_cl_0_projected = X_projected[Y == 0]
+    
     plt.figure(figsize=(6, 6))
 
     plt.scatter(
