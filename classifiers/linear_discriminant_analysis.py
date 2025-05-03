@@ -6,6 +6,12 @@ from dimensionality_reduction.class_separability_measures import (
 
 
 class LinearDiscriminantAnalysis:
+    """
+    Linear Discriminant Analysis.
+
+    This classifier is specifically implemented for multi-class cases.
+    For binary class case, use the simpler version Fisher Linear Discriminant.
+    """
 
     def __init__(self, unique_classes):
         self.classes = unique_classes

@@ -6,10 +6,10 @@ from utils.data_preprocess import (
 )
 from evaluation.roc_curve import print_roc_curve, predictions_by_threshold
 from dimensionality_reduction.class_separability_measures import (
-    fld_vector,
     trace_ratio,
 )
 from visualization.fld import display_1d_projection
+from classifiers.fisher_linear_discriminant import FisherLinearDiscriminant
 
 
 def preprocess(dataset):
@@ -47,28 +47,22 @@ def main():
     # Separability before projection
     initial_class_separability = trace_ratio(X=train_X, Y=train_Y)
 
-    # Get the projection vector
-    w = fld_vector(X=train_X, Y=train_Y)
-
-    # Project the data onto the discriminant
-    X_projected = train_X @ w
+    # Fit to the model
+    fld = FisherLinearDiscriminant(unique_classes=classes)
+    fld.fit(train_X=train_X, train_Y=train_Y)
 
     # Separability after projection
-    projection_class_separability = trace_ratio(X=X_projected, Y=train_Y)
+    projection_class_separability = trace_ratio(X=fld.train_X_projected, Y=train_Y)
 
     display_1d_projection(
-        X_projected=X_projected,
+        X_projected=fld.train_X_projected,
         Y=train_Y,
         title=f"Class separability, initial: {initial_class_separability:.3f}, projection: {projection_class_separability:.3f}",
     )
 
-    # Make predictions based on 1d projection
-    test_X_projected = test_X @ w
-
-    test_X_1_projected_mean = np.mean(test_X_projected[test_Y == 1])
-    test_X_0_projected_mean = np.mean(test_X_projected[test_Y == 0])
-    threshold = (test_X_1_projected_mean + test_X_0_projected_mean) / 2
-    pred_Y = predictions_by_threshold(test_X_projected, threshold)
+    # Make predictions on test data
+    output = fld.output(test_X=test_X, test_Y=test_Y)
+    pred_Y = output["predictions"]
 
     # Confusion matrix
     conf_matrix = confusion_matrix(classes=classes, actual_Y=test_Y, pred_Y=pred_Y)
@@ -89,16 +83,14 @@ def main():
     tpr = []
     fpr = []
 
-    
+    # Create 10 thresholds from lowest projected value to highest projected value
+    lowest_X_projected = np.min(fld.train_X_projected)
+    highest_X_projected = np.max(fld.train_X_projected)
 
-    # Get range of thresholds for classification
-    lowest_X_projected = np.min(X_projected)
-    highest_X_projected = np.max(X_projected)
-
-    # Create 10 thresholds for ROC curve
     step = (highest_X_projected - lowest_X_projected) / 10
     thresholds = np.arange(lowest_X_projected, highest_X_projected + step + 0.1, step)
 
+    test_X_projected = fld.transform(X=test_X)
     for t in thresholds:
         thresholded_pred = predictions_by_threshold(
             discriminants=test_X_projected, threshold=t
