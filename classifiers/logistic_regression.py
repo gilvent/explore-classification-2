@@ -1,5 +1,5 @@
 import numpy as np
-
+import time
 
 class LogisticRegression:
 
@@ -36,6 +36,7 @@ class LogisticRegression:
     def train(
         self, train_X: np.ndarray, train_Y: np.ndarray, iterations=5, print_losses=False
     ):
+        start_time = time.perf_counter()
         print("Logistic Regression training...")
         for index in range(0, iterations):
             scores = [self.__score(features_vector=f) for f in train_X]
@@ -73,8 +74,10 @@ class LogisticRegression:
         )
         self.loss_records.append(avg_cross_entropy_loss)
 
+        end_time = time.perf_counter()
         print("Final Loss: ", avg_cross_entropy_loss)
         print("Completed", iterations, "iterations of training")
+        print("Elapsed training time:", end_time - start_time)
 
     def output(self, test_X, threshold=0.5):
         scores = [self.__score(features_vector=f) for f in test_X]

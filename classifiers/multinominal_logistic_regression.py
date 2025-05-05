@@ -1,5 +1,5 @@
 import numpy as np
-
+import time
 
 class MultinominalLogisticRegression:
     """
@@ -54,7 +54,8 @@ class MultinominalLogisticRegression:
         return total_loss / len(clipped_softmax_X)
 
     def train(self, train_X: np.ndarray, train_Y: np.ndarray, iterations=5, print_losses=True):
-
+        start_time = time.perf_counter()
+        print("Logistic Regression Training...")
         for index in range(0, iterations):
             scores = np.asarray([self.__scores(features_vector=f) for f in train_X])
             self.softmax_X = np.asarray([self.__softmax(scores=s) for s in scores])
@@ -95,8 +96,10 @@ class MultinominalLogisticRegression:
         )
         self.loss_records.append(avg_cross_entropy_loss)
 
+        end_time = time.perf_counter()
         print("Final Loss: ", avg_cross_entropy_loss)
         print("Completed", iterations, "iterations of training")
+        print("Elapsed training time:", end_time - start_time)
 
     # Returns the softmax_X
     def predict(self, test_X):
