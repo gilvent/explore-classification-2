@@ -69,9 +69,9 @@ def fld_vector(X: np.ndarray, Y: np.ndarray):
 
 def trace_ratio(X, Y):
     """
-    J(w) = tr{Sm} / tr {Sw} for n-dimension (before projection)
+    J = tr{Sm} / tr {Sw} for n-dimension (before projection)
 
-    J(w) = Sm / Sw for 1-dimension (after projection)
+    J = Sm / Sw for 1-dimension (after projection)
 
     Measures class separability on binary classification, where features are projected to 1-dimension
     """
@@ -84,7 +84,7 @@ def trace_ratio(X, Y):
 
 def generalized_eigenvalue(X, Y):
     """
-    J(w) = tr{Sw^-1 . Sm}
+    J = tr{Sw^-1 . Sm}
 
     Measures class separability before and after LDA
     """

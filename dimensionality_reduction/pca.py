@@ -8,6 +8,7 @@ class PrincipalComponentAnalysis:
         self.PC = None
         self.train_X = None
         self.eigenvalues = None
+        self.explained_variance_ratio = None
 
     def fit(self, train_X):
         # Subtract X with the mean
