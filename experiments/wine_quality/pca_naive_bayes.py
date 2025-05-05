@@ -5,7 +5,6 @@ from evaluation.confusion_matrix import confusion_matrix, display_confusion_matr
 from utils.data_preprocess import train_test_split
 from utils.enums import FeatureType
 from dimensionality_reduction.pca import PrincipalComponentAnalysis
-from visualization.pca import display_two_pca_projections
 
 
 def main():

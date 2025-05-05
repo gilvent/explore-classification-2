@@ -4,7 +4,6 @@ from evaluation.metrics import accuracy_score, macro_f1_score
 from evaluation.confusion_matrix import confusion_matrix, display_confusion_matrix
 from utils.data_preprocess import train_test_split
 from dimensionality_reduction.pca import PrincipalComponentAnalysis
-from visualization.pca import display_two_pca_projections
 
 
 def main():
@@ -20,23 +19,12 @@ def main():
     classes = np.unique(Y)
 
     train_X, train_Y, test_X, test_Y = train_test_split(
-        X=X, Y=Y, test_split_ratio=0.7, shuffle=True, seed=13
+        X=X, Y=Y, test_split_ratio=0.3, shuffle=True, seed=13
     )
 
-    # PCA
-    pca = PrincipalComponentAnalysis(n_components=2)
+    # Apply PCA after selecting top n-components that retains as much variance as possible
+    pca = PrincipalComponentAnalysis(n_components=3)
     pca.fit(train_X=train_X)
-
-    # This visualization is for top 2 principal components
-    # Modify pc_index to check the other principal components
-    display_two_pca_projections(
-        train_X=train_X,
-        train_Y=train_Y,
-        pc_index_1=0,
-        pc_index_2=1,
-        pca_eigenvectors=pca.eigenvectors,
-        explained_variance_ratio=pca.explained_variance_ratio,
-    )
 
     # Project the data
     train_X_pca = pca.transform(X=train_X)
@@ -50,7 +38,7 @@ def main():
 
     # Train the model with PCA result
     model.train(
-        train_X=train_X_pca, train_Y=train_Y, iterations=1500, print_losses=False
+        train_X=train_X_pca, train_Y=train_Y, iterations=1000, print_losses=True
     )
 
     # Project the test data to make predictions
@@ -68,7 +56,7 @@ def main():
     display_confusion_matrix(
         conf_matrix=conf_matrix,
         classes=classes,
-        title="White Wine Quality/Logistic Regression",
+        title="White Wine Quality/Logistic Regression with PCA",
         info=info_text,
     )
 

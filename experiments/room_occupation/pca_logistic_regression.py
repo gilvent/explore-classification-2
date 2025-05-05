@@ -7,7 +7,6 @@ from utils.data_preprocess import (
 )
 from evaluation.roc_curve import print_roc_curve, predictions_by_threshold
 from dimensionality_reduction.pca import PrincipalComponentAnalysis
-from visualization.pca import display_two_pca_projections
 
 
 def preprocess(dataset):
@@ -40,20 +39,9 @@ def main():
     train_X, train_Y = preprocess(training_set)
     test_X, test_Y = preprocess(test_set)
 
-    # PCA
+    # Apply PCA after selecting top n-components that retains as much variance as possible
     pca = PrincipalComponentAnalysis(n_components=3)
     pca.fit(train_X=train_X)
-
-    # This visualization is for top 2 principal components
-    # Modify pc_index to check the other principal components
-    display_two_pca_projections(
-        train_X=train_X,
-        train_Y=train_Y,
-        pc_index_1=0,
-        pc_index_2=1,
-        pca_eigenvectors=pca.eigenvectors,
-        explained_variance_ratio=pca.explained_variance_ratio,
-    )
 
     # Project the data
     train_X_pca = pca.transform(X=train_X)

@@ -58,7 +58,7 @@ def main():
     ]
     classifier = NaiveBayes(unique_classes=classes, feature_types=feature_types)
 
-    classifier.train(train_X=train_X, train_Y=train_Y)
+    classifier.train(train_X=train_X_pca, train_Y=train_Y)
 
     # Project test data to make predictions
     test_X_pca = pca.transform(X=test_X)
