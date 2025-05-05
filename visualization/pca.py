@@ -8,11 +8,12 @@ def display_two_pca_projections(
     pc_index_1,
     pc_index_2,
     pca_eigenvectors,
-    explained_variance_ratio
+    explained_variance_ratio,
+    title="PCA Projection"
 ):
     X_pca = train_X @ pca_eigenvectors
 
-    plt.figure(figsize=(10, 7))
+    plt.figure(figsize=(8, 6))
 
     # Plot each class with a different color
     for label in np.unique(train_Y):
@@ -27,7 +28,7 @@ def display_two_pca_projections(
     plt.ylabel(
         f"Principal Component {pc_index_2 + 1} ({explained_variance_ratio[pc_index_2]:.2%} variance)"
     )
-    plt.title("PCA of Multiclass Dataset")
+    plt.title(title)
     plt.legend()
     plt.grid(alpha=0.3)
 

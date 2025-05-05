@@ -3,12 +3,15 @@ import matplotlib.pyplot as plt
 
 
 def display_1d_projection(
-    X_projected: np.ndarray, Y: np.ndarray, title="Projected value"
+    X_projected: np.ndarray,
+    Y: np.ndarray,
+    title="1D Projection",
+    label="Projected value",
 ):
 
     X_cl_1_projected = X_projected[Y == 1]
     X_cl_0_projected = X_projected[Y == 0]
-    
+
     plt.figure(figsize=(6, 6))
 
     plt.scatter(
@@ -26,9 +29,9 @@ def display_1d_projection(
         label="Class 1",
     )
     plt.axvline(x=0, color="black", linestyle="-", alpha=0.5)
-    plt.xlabel(title)
+    plt.xlabel(label)
     plt.yticks([])
-    plt.title("1D Projection using Fisher's Linear Discriminant")
+    plt.title(title)
     plt.legend()
     plt.grid(True)
 
