@@ -10,6 +10,7 @@ def main():
     dataset = np.genfromtxt(
         fname="data/winequality_white.csv", delimiter=";", dtype=str
     )
+
     # Remove header row
     dataset = dataset[1:]
     dataset = dataset.astype(float)
@@ -19,7 +20,7 @@ def main():
     classes = np.unique(Y)
 
     train_X, train_Y, test_X, test_Y = train_test_split(
-        X=X, Y=Y, test_split_ratio=0.7, shuffle=False, seed=13
+        X=X, Y=Y, test_split_ratio=0.3, shuffle=True, seed=13
     )
 
     # Class separability before projection
@@ -33,9 +34,8 @@ def main():
     projection_class_separability = generalized_eigenvalue(
         X=model.train_X_projected, Y=train_Y
     )
-    print(
-        f"Class separability, initial: {initial_class_separability:.3f}, LDA: {projection_class_separability:.3f}"
-    )
+    class_separability_text = f"Class separability: {initial_class_separability:.3f} (Before LDA), {projection_class_separability:.3f} (After LDA)"
+    print(class_separability_text)
 
     # Predictions on test data
     output = model.output(test_X=test_X)
@@ -44,11 +44,13 @@ def main():
 
     pred_Y = output["predictions"]
 
+    # Compute metrics
     accuracy = accuracy_score(actual_Y=test_Y, pred_Y=pred_Y)
     conf_matrix = confusion_matrix(classes=classes, actual_Y=test_Y, pred_Y=pred_Y)
     macro_f1 = macro_f1_score(conf_matrix=np.array(conf_matrix))
-    info_text = f"Accuracy: {accuracy:.2f}, Macro F1: {macro_f1:.2f}"
+    info_text = f"Accuracy: {accuracy:.2f}, Macro F1: {macro_f1:.2f} \n{class_separability_text}"
 
+    # Visualize confusion matrix
     display_confusion_matrix(
         conf_matrix=conf_matrix,
         classes=classes,

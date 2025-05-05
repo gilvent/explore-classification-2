@@ -1,7 +1,5 @@
 import numpy as np
-from dimensionality_reduction.class_separability_measures import (
-    trace_ratio,
-)
+from dimensionality_reduction.class_separability_measures import trace_ratio
 from evaluation.roc_curve import predictions_by_threshold, print_roc_curve
 from evaluation.confusion_matrix import confusion_matrix, display_confusion_matrix
 from evaluation.metrics import accuracy_score, recall_score, precision_score, f1_score
@@ -44,7 +42,8 @@ def main():
     display_1d_projection(
         X_projected=fld.train_X_projected,
         Y=train_Y,
-        title=f"Class separability, initial: {initial_class_separability:.3f}, projection: {projection_class_separability:.3f}",
+        title="Heart Disease/ 1D Projection using FLD",
+        label=f"Class separability, initial: {initial_class_separability:.3f}, projection: {projection_class_separability:.3f}",
     )
 
     # Make predictions on test data
@@ -78,7 +77,7 @@ def main():
     thresholds = np.arange(lowest_X_projected, highest_X_projected + step + 0.1, step)
 
     test_X_projected = fld.transform(X=test_X)
-    
+
     for t in thresholds:
         thresholded_pred = predictions_by_threshold(
             discriminants=test_X_projected, threshold=t
@@ -95,7 +94,7 @@ def main():
         tpr.append(tp / (tp + fn))
         fpr.append(fp / (fp + tn))
 
-    print_roc_curve(fpr, tpr)
+    print_roc_curve(fpr, tpr, title="Heart Disease/ ROC Curve using FLD")
 
 
 if __name__ == "__main__":

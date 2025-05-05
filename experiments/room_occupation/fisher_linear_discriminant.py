@@ -57,7 +57,8 @@ def main():
     display_1d_projection(
         X_projected=fld.train_X_projected,
         Y=train_Y,
-        title=f"Class separability, initial: {initial_class_separability:.3f}, projection: {projection_class_separability:.3f}",
+        title="Room Occupancy/ 1D projection using FLD",
+        label=f"Class separability, initial: {initial_class_separability:.3f}, projection: {projection_class_separability:.3f}",
     )
 
     # Make predictions on test data
@@ -107,7 +108,7 @@ def main():
         tpr.append(tp / (tp + fn))
         fpr.append(fp / (fp + tn))
 
-    print_roc_curve(fpr, tpr)
+    print_roc_curve(fpr, tpr, title="Room Occupancy/ROC Curve using FLD")
 
 
 if __name__ == "__main__":
